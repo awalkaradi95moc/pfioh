@@ -118,7 +118,7 @@ class SwiftStore(StoreHandler):
 
         try:
             containerName = key
-            key = os.path.join('output','data')
+            key = os.path.join('input','data')
             swiftDataObject = self.swiftConnection.get_object(containerName, key)
             if b_delete:
                 self.swiftConnection.delete_object(containerName, key)
@@ -214,10 +214,13 @@ class SwiftStore(StoreHandler):
             d_ret['msg']    = 'Retrieving File/Directory from Swift failed'
             return d_ret
 
+        self.qprint('*******************object*****************************')
+        self.qprint(dataObject)
         objectInformation= dataObject[0]
         objectValue= dataObject[1]
         fileContent= objectValue
-    
+
+        self.qprint('filecontent from Swift = %s'%fileContent)     
         #Unzipping
         if not b_zip:
             raise NotImplementedError('Please use the zip option')
@@ -248,8 +251,14 @@ class SwiftStore(StoreHandler):
                 d_ret['msg']        = d_fio['msg']
                 d_ret['timestamp']  = '%s' % datetime.datetime.now()
                 return d_ret              
-        
-        self.writeData(fileContent)        
+        self.qprint("Transmitting " + Colors.YELLOW + "311" + Colors.PURPLE +
+                        " target bytes from " + Colors.YELLOW + 
+                        "swift store" + Colors.PURPLE + '...', comms = 'status')
+        self.send_response(200)
+        # self.send_header('Content-type', 'text/json')
+        self.end_headers()
+        self.wfile.write(fileContent)
+        #self.writeData(fileContent)        
 
         #Transmit the file
         d_ret['status'] = True
