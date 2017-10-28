@@ -45,7 +45,6 @@ class MountDir(StoreHandler):
                 except Exception as err:
                     self.qprint(err)
 
-
         finally:
             if b_zip:
                 d_fio = zip_process(
@@ -57,7 +56,7 @@ class MountDir(StoreHandler):
                 d_ret['status'] = d_fio['status']
                 d_ret['msg']    = d_fio['msg']
                 d_ret['write']['filesize']  = "{:,}".format(self.getSize(fileName))
-                #os.remove(fileName)
+                os.remove(fileName)
 
         d_ret['write']['file']      = fileName
         d_ret['write']['status']    = True

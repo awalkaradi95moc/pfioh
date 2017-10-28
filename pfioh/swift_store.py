@@ -2,10 +2,8 @@
 Handle Swift File Storage Option
 """
 
-import ast
 import base64
 import datetime
-import zlib
 import zipfile
 import os
 import configparser
@@ -50,10 +48,10 @@ class SwiftStore(StoreHandler):
         Swift credentials should be stored as a cfg file at /etc/swift 
         """
 
+        configPath = '/etc/swift/swift-credentials.cfg'
+
         for k,v in kwargs:
             if k == 'configPath': configPath= v
-
-        configPath = '/etc/swift/swift-credentials.cfg'
 
         config = configparser.ConfigParser()
         try:
@@ -68,7 +66,7 @@ class SwiftStore(StoreHandler):
         osProjectDomain     = config['PROJECT']['osProjectDomain']
         osProjectName       = config['PROJECT']['osProjectName']
         
-        scopedSession = self._getScopedSession(osAuthUrl, username, password, osProjectDomain, osProjectName)
+        scopedSession        = self._getScopedSession(osAuthUrl, username, password, osProjectDomain, osProjectName)
         self.swiftConnection = swift_client.Connection(session=scopedSession)
             
 
@@ -130,7 +128,7 @@ class SwiftStore(StoreHandler):
         return swiftDataObject
 
 
-    def doZipping(self, fileContent, clientFile):
+    def zipUpContent(self, fileContent, clientFile):
         """
         Zips up the file content byte stream, reads from archive and returs zipped content
         """
@@ -170,7 +168,7 @@ class SwiftStore(StoreHandler):
             return d_ret
 
         if not b_zip:
-            fileContent = self.doZipping(fileContent, clientFile)
+            fileContent = self.zipUpContent(fileContent, clientFile)
 
         try:
             containerName = key
@@ -204,7 +202,6 @@ class SwiftStore(StoreHandler):
             if k== 'cleanup': b_cleanup= v
             if k== 'd_ret': d_ret= v
 
-
         try:
             self._initiateSwiftConnection()
             dataObject = self._getObject(key, False)
@@ -214,8 +211,8 @@ class SwiftStore(StoreHandler):
             d_ret['msg']    = 'Retrieving File/Directory from Swift failed'
             return d_ret
 
-        self.qprint('*******************object*****************************')
-        self.qprint(dataObject)
+        #self.qprint('*******************object*****************************')
+        #self.qprint(dataObject)
         objectInformation= dataObject[0]
         objectValue= dataObject[1]
         fileContent= objectValue
@@ -251,9 +248,9 @@ class SwiftStore(StoreHandler):
                 d_ret['msg']        = d_fio['msg']
                 d_ret['timestamp']  = '%s' % datetime.datetime.now()
                 return d_ret              
-        self.qprint("Transmitting " + Colors.YELLOW + "311" + Colors.PURPLE +
+        self.qprint("Transmitting " + Colors.YELLOW + len(fileContent) + Colors.PURPLE +
                         " target bytes from " + Colors.YELLOW + 
-                        "swift store" + Colors.PURPLE + '...', comms = 'status')
+                        " swift store container %s "%key + Colors.PURPLE + '...', comms = 'status')
         self.send_response(200)
         # self.send_header('Content-type', 'text/json')
         self.end_headers()
