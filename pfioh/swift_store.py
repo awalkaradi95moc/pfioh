@@ -250,7 +250,7 @@ class SwiftStore(StoreHandler):
                 return d_ret              
         self.qprint("Transmitting " + Colors.YELLOW + len(fileContent) + Colors.PURPLE +
                         " target bytes from " + Colors.YELLOW + 
-                        " swift store container %s "%key + Colors.PURPLE + '...', comms = 'status')
+                        " swift store container {} ".format(key) + Colors.PURPLE + '...', comms = 'status')
         self.send_response(200)
         # self.send_header('Content-type', 'text/json')
         self.end_headers()
