@@ -248,7 +248,7 @@ class SwiftStore(StoreHandler):
                 d_ret['msg']        = d_fio['msg']
                 d_ret['timestamp']  = '%s' % datetime.datetime.now()
                 return d_ret              
-        self.qprint("Transmitting " + Colors.YELLOW + len(fileContent) + Colors.PURPLE +
+        self.qprint("Transmitting " + Colors.YELLOW + " {} ".format(len(fileContent)) + Colors.PURPLE +
                         " target bytes from " + Colors.YELLOW + 
                         " swift store container {} ".format(key) + Colors.PURPLE + '...', comms = 'status')
         self.send_response(200)
