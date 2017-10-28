@@ -131,6 +131,10 @@ class StoreHandler(BaseHTTPRequestHandler):
         b_exists            = os.path.exists(str_serverPath)
 
         b_createdNewDir     = False
+        
+        if Gd_internalvar['b_swiftStorage']:
+            b_exists     = True
+            b_swiftStore = True 
 
         if not b_exists and Gd_internalvar['createDirsAsNeeded']:
             os.makedirs(str_serverPath)
@@ -139,6 +143,7 @@ class StoreHandler(BaseHTTPRequestHandler):
         d_ret               = {
             'status':           b_exists or b_createdNewDir,
             'isfile':           b_isFile,
+            'isswiftstore':     b_swiftStore,
             'isdir':            b_isDir,
             'createdNewDir':    b_createdNewDir
         }
