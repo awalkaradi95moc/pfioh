@@ -217,7 +217,7 @@ class SwiftStore(StoreHandler):
         objectValue= dataObject[1]
         fileContent= objectValue
 
-        self.qprint('filecontent from Swift = %s'%fileContent)     
+        #self.qprint('filecontent from Swift = %s'%fileContent)     
         #Unzipping
         if not b_zip:
             raise NotImplementedError('Please use the zip option')
